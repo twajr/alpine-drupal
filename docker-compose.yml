@@ -1,0 +1,11 @@
+version: '2'
+services:
+  alpine-test:
+    image: alpine-drupal
+    environment:
+      DOCROOT: /var/application/public
+      GIT_URL: https://bitbucket.org/usdawcmaas/wcmaas-portal.git
+      GIT_BRANCH: master
+    stdin_open: true
+    tty: true
+    privileged: true

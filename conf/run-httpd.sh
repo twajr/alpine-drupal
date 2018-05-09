@@ -112,4 +112,4 @@ if [ ! -e "/initialized" ]; then
   touch "/initialized"
 fi
 
-exec /usr/sbin/apachectl -DFOREGROUND
+exec /usr/sbin/httpd -DFOREGROUND
