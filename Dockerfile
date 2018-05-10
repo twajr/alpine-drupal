@@ -29,7 +29,6 @@ RUN apk add --no-cache \
 # NEW - Apache
 RUN apk add --no-cache openrc \
     apache2 \
-    apache2-ssl \
     apache2-utils \
     apache2-error \
     apache2-ctl \
