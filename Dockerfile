@@ -27,42 +27,38 @@ RUN apk add --no-cache \
     rsync
 
 # NEW - Apache
-RUN apk add --no-cache openrc
-RUN apk add --no-cache apache2
-RUN apk add --no-cache apache2-ssl
-RUN apk add --no-cache apache2-utils
-RUN apk add --no-cache apache2-error
-RUN apk add --no-cache apache2-ctl
-RUN apk add --no-cache php7-apache2 
+RUN apk add --no-cache openrc \
+    apache2 \
+    apache2-ssl \
+    apache2-utils \
+    apache2-error \
+    apache2-ctl \
+    php7-apache2 \
+    apache2-webdav \
+    apache2-lua \
+    apache2-proxy
 
 # NEW  php
-RUN apk add --no-cache 	php7
-RUN apk add --no-cache  php7-phar 
-RUN apk add --no-cache  php7-json
-RUN apk add --no-cache php7-ctype
-
-RUN apk add --no-cache php7-tokenizer
-RUN apk add --no-cache  php7-xmlwriter
-RUN apk add --no-cache  php7-simplexml
-
-RUN apk add --no-cache php7-iconv 
-RUN apk add --no-cache php7-openssl
-
-RUN apk add --no-cache 	php7-curl 
-RUN apk add --no-cache 	php7-gd 
-
-RUN apk add --no-cache 	php7-mysqli
-RUN apk add --no-cache 	php7-mysqlnd
-
-RUN apk add --no-cache  php7-imap 
-RUN apk add --no-cache  php7-odbc 
-
-RUN apk add --no-cache 	php7-mbstring 
-RUN apk add --no-cache 	php7-mcrypt 
-RUN apk add --no-cache 	php7-redis 
-RUN apk add --no-cache 	php7-bcmath 
-
-RUN apk add --no-cache py-setuptools
+RUN apk add --no-cache 	php7 \
+    php7-phar \
+    php7-json \
+    php7-ctype \
+    php7-tokenizer \
+    php7-xmlwriter \
+    php7-simplexml \  
+    php7-iconv \
+    php7-openssl \
+    php7-curl \
+    php7-gd \
+    php7-mysqli \
+    php7-mysqlnd \
+    php7-imap \
+    php7-odbc \
+    php7-mbstring \
+    php7-mcrypt \
+    php7-redis \
+    php7-bcmath \
+    py-setuptools
 
 # NEW
 RUN mkdir -p /usr/local/src
@@ -81,28 +77,26 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 RUN drush dl registry_rebuild-7.x
 
-#RUN rc-update add apache2 default
-
-# Disable services management by systemd.
-# RUN systemctl disable httpd.service
+# NEW - Seems to be a bug
+RUN mkdir /run/apache2
 
 # Apache config, and PHP config, test apache config
 # See https://github.com/docker/docker/issues/7511 /tmp usage
 COPY public/index.php /var/www/public/index.php
-COPY centos-7 /tmp/centos-7/
+COPY alpine /tmp/alpine/
 
-RUN rsync -a /tmp/centos-7/etc/ /etc/ && \
-    apachectl configtest
+RUN rsync -a /tmp/alpine/etc/ /etc/
+
+RUN apachectl configtest
 
 EXPOSE 80 443
 
-# # Simple startup script to avoid some issues observed with container restart 
-# ADD conf/run-httpd.sh /run-httpd.sh
-# RUN chmod -v +x /run-httpd.sh
+# Simple startup script to avoid some issues observed with container restart 
+ADD /run-httpd.sh /run-httpd.sh
+RUN chmod -v +x /run-httpd.sh
 
-# ADD conf/mail.ini /etc/php.d/mail.ini
-# RUN chmod 644 /etc/php.d/mail.ini
+ADD conf/mail.ini /etc/php.d/mail.ini
+RUN chmod 644 /etc/php.d/mail.ini
 
-# CMD ["/run-httpd.sh"]
+CMD ["./run-httpd.sh"]
 
-CMD ["/bin/bash"]
