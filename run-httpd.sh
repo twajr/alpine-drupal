@@ -39,8 +39,8 @@ rm -rf /run/apache2/* /tmp/apache2*
 # DocumentRoot in httpd config would be set to GIT_PATH+DOC_SUBDIR
 
 file_env 'DOCROOT'
-if [ ! -z "$DOCROOT" ] && ! grep -q "^DocumentRoot \"$DOCROOT\"" /etc/httpd/conf/httpd.conf ; then
-  sed -i "s#/var/www/public#$DOCROOT#g" /etc/httpd/conf/httpd.conf
+if [ ! -z "$DOCROOT" ] && ! grep -q "^DocumentRoot \"$DOCROOT\"" /etc/apache2/httpd.conf ; then
+  sed -i "s#/var/www/public#$DOCROOT#g" /etc/apache2/httpd.conf
 fi
 echo "export DOCROOT='$DOCROOT'" > /etc/profile.d/docroot.sh
 
